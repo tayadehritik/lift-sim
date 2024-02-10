@@ -1,0 +1,53 @@
+.row {
+    width: 90%;
+    float: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+
+.floor {
+    height: 200px;
+    overflow: hidden;
+}
+
+.lift {
+    transition-property: top;
+    transition-duration: 5s;
+    position: absolute;
+    height: 200px;
+    display: flex;
+    flex-direction: row;
+}
+
+.lift-background{
+    width: 10vw;
+    height: 90%;
+    background-color: black;
+    margin-left: 1vw;
+    display: flex;
+    flex-direction: row;
+    align-self: flex-end;
+}
+
+.lift-door {
+    transition-property: margin-left;
+    transition-duration: 2s;
+}
+
+.lift-button {
+    width: 100px;
+}
+
+
+hr {
+    height: 1px;
+    background-color: black;
+    margin: 0;
+}
+
+body{
+    margin: 0;
+}
+
