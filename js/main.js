@@ -20,12 +20,15 @@ class liftQItem {
 
 var lifts = 0;
 var floors = 0;
-const floorList = [];
-const liftList = [];
+var floorList = [];
+var liftList = [];
 
 var liftCounter = 0;
 
 var liftsQueue = new Map();
+
+var dispatcherQF = [];
+var dispatcherQD = [];
 
 function onFloor(button) {
 
@@ -49,8 +52,9 @@ function onFloor(button) {
         return;
     }   
 
-
-    qController(floor, direction);
+    dispatcherQF.push(floor);
+    dispatcherQD.push(direction);
+    //qController(floor, direction);
 
     if(direction == "up")
     {
@@ -61,14 +65,60 @@ function onFloor(button) {
         downButtonEle.style.backgroundColor = "red";
     }
 
-    console.log(liftsQueue);
+    //console.log(liftsQueue);
 
 }
 
 
 function qController(floor, direction)
 {
+    var lift1 = finClosestLiftInSameDirSameFlo(floor, direction);
+    if(lift1 == "not found")
+    {
+        console.log("not found 1st");
+        
+    }
+    else
+    {
+        console.log(lift1);
+        liftsQueue.get(lift1).q.push(floor);
+        liftsQueue.get(lift1).dirq.push(direction);
+        console.log("first");
+        return ;
+    }
     
+
+
+    var lift2 = findClosestEmptyLift(floor, direction);
+    if(lift2 == "not found")
+    {
+        console.log("not found 2st");
+    }
+    else
+    {
+        console.log(lift2);
+        liftsQueue.get(lift2).q.push(floor);
+        liftsQueue.get(lift2).dirq.push(direction);
+        console.log("second");
+        return ;
+    }
+
+
+    var lift3 = findClosestLiftInSameDir(floor, direction);
+    if(lift3 == "not found")
+    {
+        console.log("not found 3rd");
+    }
+    else
+    {
+        console.log(lift3);
+        liftsQueue.get(lift3).q.push(floor);
+        liftsQueue.get(lift3).dirq.push(direction);
+        console.log("third");
+        return ;
+    }
+
+    /*
     var lift  = liftsQueue.get(liftCounter%lifts);
     
     if(lift.dirq == 0)
@@ -108,7 +158,7 @@ function qController(floor, direction)
             lift.dirq.push(direction);
         }
     }
-    
+    */
     /*
     if(lift.direction == "none")
     {
@@ -117,6 +167,151 @@ function qController(floor, direction)
     }*/
     
     
+
+}
+
+function sortLiftsWithDiff(resListLift, resListDiff)
+{
+    for(var i=0;i<resListDiff.length;i++)
+    {
+        
+        for(var j=0;j<resListDiff.length;j++)
+        {
+            if(resListDiff[j] > resListDiff[i])
+            {
+                var temp = resListDiff[i];
+                resListDiff[i] = resListDiff[j];
+                resListDiff[j] = temp;
+
+                var temp2 = resListLift[i];
+                resListLift[i] = resListLift[j];
+                resListLift[j] = temp2; 
+            }
+        }
+    }
+
+    
+}
+
+
+function finClosestLiftInSameDirSameFlo(floor, direction) {
+
+    var resListLift = [];
+    var resListDiff = [];
+    
+    for(var i=0;i<lifts;i++)
+    {
+        //liftsQueue.get(i).q.length > 0
+        if(direction == "up" && liftsQueue.get(i).is_travelling)
+        {
+            var lastLiftDir = liftsQueue.get(i).dirq[liftsQueue.get(i).dirq.length-1];
+            var lastFloorY = floorList[liftsQueue.get(i).q[liftsQueue.get(i).q.length-1]].y;
+            //var lastFloorY = liftList[i].y;
+            var currFloorY = floorList[floor].y;
+            var diff = lastFloorY - currFloorY;
+            if(diff >= 0 && lastLiftDir == direction)
+            {
+                resListDiff.push(diff);
+                resListLift.push(i);
+            }
+        }
+        else if(direction == "down" && liftsQueue.get(i).is_travelling)
+        {   
+            var lastLiftDir = liftsQueue.get(i).dirq[liftsQueue.get(i).dirq.length-1];
+            var lastFloorY = floorList[liftsQueue.get(i).q[liftsQueue.get(i).q.length-1]].y;
+            //var lastFloorY = liftList[i].y;
+            var currFloorY = floorList[floor].y;
+            //var diff = currFloorY - lastFloorY;
+            var diff = lastFloorY - currFloorY;
+            if(diff <=  0 && lastLiftDir == direction)
+            {
+                resListDiff.push(diff);
+                resListLift.push(i);
+            }
+        }
+    }
+
+
+    sortLiftsWithDiff(resListLift,resListDiff);
+
+
+    if(resListLift.length > 0)
+    {
+        return resListLift[0];
+    }
+    else
+    {
+        return "not found"; 
+    }
+
+
+    
+}
+
+function findClosestEmptyLift(floor, direction) {
+
+    var resListLift = [];
+    var resListDiff = [];
+
+    for(var i=0;i<lifts;i++)
+    {
+        var liftY = liftList[i].y;        
+        var floorY = floorList[floor].y;
+        var diff = Math.abs(liftY - floorY);
+        if(!liftsQueue.get(i).is_travelling)
+        {
+            resListLift.push(i);
+            resListDiff.push(diff);
+        }
+
+    }
+
+    sortLiftsWithDiff(resListLift,resListDiff);
+
+    if(resListLift.length > 0)
+    {
+        return resListLift[0];
+    }
+    else
+    {
+        return "not found"; 
+    }
+
+}
+
+function findClosestLiftInSameDir(floor, direction) {
+
+    var resListLift = [];
+    var resListDiff = [];
+    console.log("here");
+    for(var i=0;i<lifts;i++)
+    {
+        if(liftsQueue.get(i).q.length > 0)
+        {
+            
+            var lastLiftDir = liftsQueue.get(i).dirq[liftsQueue.get(i).dirq.length-1];
+            var lastFloorY = floorList[liftsQueue.get(i).q[liftsQueue.get(i).q.length-1]].y;
+            //var lastFloorY = floorList[liftsQueue.get(i).q[0]].y;  
+            var currFloorY = floorList[floor].y;
+            var diff = Math.abs(lastFloorY - currFloorY);
+            if(direction == lastLiftDir)
+            {
+                resListLift.push(i);
+                resListDiff.push(diff);
+            }
+        }
+    }
+
+    sortLiftsWithDiff(resListLift,resListDiff);
+
+    if(resListLift.length > 0)
+    {
+        return resListLift[0];
+    }
+    else
+    {
+        return "not found"; 
+    }
 
 }
 
@@ -160,17 +355,29 @@ function myFunction() {
         }
 
         
+        floorList = [];
+        liftList = [];
+        liftCounter = 0;
+        liftsQueue = new Map();
+        
         var floorLayout = document.getElementById("floor-layout");
         var floorLayoutString = "";
-        var liftWidth = ((innerWidth-100)/lifts);
+        //var liftWidth = ((innerWidth-100)/lifts);
+        var liftWidth = 200;
         var floorHeight = 200;
         var buildHeight = floors * floorHeight;
+        var floorWidth = 100 + (liftWidth*lifts);
+
+        if(floorWidth < innerWidth)
+        {
+            floorWidth = innerWidth;
+        }
 
         for(var i=0,y=100;i<floors;i++,y=y+floorHeight)
         {
             floorList.push(new Item(0,y));
 
-            floorLayoutString += "<div id='floor_"+i+"' class = 'floor'>" +
+            floorLayoutString += "<div id='floor_"+i+"' class = 'floor' style='width:"+floorWidth+"px;'>" +
             "<hr>"
 
             if(i == 0)
@@ -218,7 +425,8 @@ function myFunction() {
         liftLayout.innerHTML = liftLayoutString;
 
         
-        //console.log(liftsQueue);
+        console.log(liftList);
+        console.log(floorList);
         
 
     }
@@ -249,6 +457,8 @@ function findTime(lift, floor) {
 }
 
 
+
+
 async function makeLiftTravel(lift, floor,direction){
 
     var timediff = findTime(lift,floor);
@@ -265,8 +475,8 @@ async function makeLiftTravel(lift, floor,direction){
         }, timediff*1000);
     })
 
-    console.log(await liftprom);
-
+    var a = await liftprom;
+    
     var liftDoorElement = document.getElementById("lift_"+lift+"_door_2");
     liftDoorElement.style.marginLeft = "100%";
     
@@ -277,7 +487,7 @@ async function makeLiftTravel(lift, floor,direction){
             //closeLiftDoors(lift,floor);
         }, 2000);
     })
-    console.log(await liftdoorprom);
+    var b = await liftdoorprom;
     
     liftDoorElement.style.marginLeft = "0%";
 
@@ -289,14 +499,15 @@ async function makeLiftTravel(lift, floor,direction){
             //closeLiftDoors(lift,floor);
         }, 2000);
     })
-    console.log(await liftdoorcloseprom);
+    var c = await liftdoorcloseprom;
 
     liftsQueue.get(lift).is_travelling = false;
     liftsQueue.get(lift).q.shift();
     liftsQueue.get(lift).dirq.shift();
-
+    liftList[lift].y =  floorList[floor].y;
     var upButtonEle = document.getElementById("up_button_"+floor);
     var downButtonEle = document.getElementById("down_button_"+floor);
+    //console.log(liftList);
 
     if(direction == "up")
     {
@@ -322,4 +533,31 @@ setInterval(function() {
             makeLiftTravel(i, liftsQueue.get(i).q[0], liftsQueue.get(i).dirq[0]);
         }
     }
+
+    /* Debug
+    var log = document.getElementById("log");
+    var logStr = "<br>";
+
+    for(var i=0;i<lifts;i++)
+    {
+        logStr += "[" + i + " - direction: " + liftsQueue.get(i).direction + ", is_travelling: " + liftsQueue.get(i).is_travelling + ", q: " + liftsQueue.get(i).q + ", dirq: " + liftsQueue.get(i).dirq +"<br>";
+    }
+
+    logStr += "<br>";
+
+    log.innerHTML = logStr;
+    */
+
 }, 1000);
+
+
+setInterval(function() {
+
+    if(dispatcherQF.length > 0)
+    {
+        qController(dispatcherQF.shift(), dispatcherQD.shift());
+    }
+
+}, 500);
+
+
