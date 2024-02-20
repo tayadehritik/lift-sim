@@ -118,6 +118,13 @@ function qController(floor, direction)
         return ;
     }
 
+
+    var lift4 = findAnyLift(floor,direction);
+    console.log(lift4);
+    liftsQueue.get(lift4).q.push(floor);
+    liftsQueue.get(lift4).dirq.push(direction);
+    console.log("fourth");
+
     /*
     var lift  = liftsQueue.get(liftCounter%lifts);
     
@@ -315,6 +322,11 @@ function findClosestLiftInSameDir(floor, direction) {
 
 }
 
+function findAnyLift(floor, direction)
+{
+    var liftIndex = Math.floor(Math.random() * lifts);
+    return liftIndex;
+}
 
 function getDirection(one, two)
 {
@@ -346,7 +358,7 @@ function myFunction() {
             floors =0;
             return;
         }
-        else if(lifts > 0 && floors<=0)
+        else if(lifts > 0 && floors<=1)
         {
             alert("invalid input");
             lifts = 0;
@@ -373,31 +385,32 @@ function myFunction() {
             floorWidth = innerWidth;
         }
 
-        for(var i=0,y=100;i<floors;i++,y=y+floorHeight)
+        for(var i=0,y=250;i<floors;i++,y=y+floorHeight)
         {
             floorList.push(new Item(0,y));
 
             floorLayoutString += "<div id='floor_"+i+"' class = 'floor' style='width:"+floorWidth+"px;'>" +
-            "<hr>"
+            "<hr>"+
+            "<div style='height:100%;display:flex;flex-direction:column;justify-content:center;'>"
 
             if(i == 0)
             {
-                floorLayoutString += "<button data-floor='"+i+"' data-direction='down' id='down_button_"+i+"' class='lift-button' style='background-color: white;' onclick='onFloor(this)'>Down</button>";
+                floorLayoutString += "<button data-floor='"+i+"' data-direction='down' id='down_button_"+i+"' class='lift-button' style='background-color: #6992AE;' onclick='onFloor(this)'>Down</button>";
             }
             else if(i == floors-1)
             {
-                floorLayoutString += "<button data-floor='"+i+"' data-direction='up' id='up_button_"+i+"'  class='lift-button' style='background-color: white;' onclick='onFloor(this)'>Up</button>"
+                floorLayoutString += "<button data-floor='"+i+"' data-direction='up' id='up_button_"+i+"'  class='lift-button' style='background-color: #6992AE;' onclick='onFloor(this)'>Up</button>"
                 
             }
             else
             {
-                floorLayoutString += "<button data-floor='"+i+"' data-direction='up' id='up_button_"+i+"'  class='lift-button' style='background-color: white;' onclick='onFloor(this)'>Up</button>"+
+                floorLayoutString += "<button data-floor='"+i+"' data-direction='up' id='up_button_"+i+"'  class='lift-button' style='background-color: #6992AE;' onclick='onFloor(this)'>Up</button>"+
                 "<br>"+
-                "<button data-floor='"+i+"' data-direction='down' id='down_button_"+i+"' class='lift-button' style='background-color: white;' onclick='onFloor(this)'>Down</button>"
+                "<button data-floor='"+i+"' data-direction='down' id='down_button_"+i+"' class='lift-button' style='background-color: #6992AE;' onclick='onFloor(this)'>Down</button>"
                 
             }
             
-            floorLayoutString += "</div>";
+            floorLayoutString += "<br><h3 style='margin-left:20px;width:100px;text-align:center;'>Floor: "+(floors-i)+"</h3></div></div>";
         }
 
         
@@ -406,9 +419,9 @@ function myFunction() {
         var liftLayout = document.getElementById("lift-layout");
         var liftLayoutString = "";
 
-        for(var i=0,x=100;i<lifts;i++,x=x+liftWidth)
+        for(var i=0,x=120;i<lifts;i++,x=x+liftWidth)
         {
-            var y = (100+((floors-1)*floorHeight));
+            var y = (250+((floors-1)*floorHeight));
             liftList.push(new Item(x,y));
             liftsQueue.set(i, new liftQItem(false,"none", [], []));
             
@@ -452,7 +465,7 @@ function findTime(lift, floor) {
     var floorY = floorList[floor].y;
     var liftY = parseInt(document.getElementById("lift_"+lift).style.top);
     var timediff = Math.abs(floorY-liftY) / 100;
-    return timediff * 2;
+    return timediff;
 
 }
 
@@ -511,11 +524,11 @@ async function makeLiftTravel(lift, floor,direction){
 
     if(direction == "up")
     {
-        upButtonEle.style.backgroundColor = "white";
+        upButtonEle.style.backgroundColor = "#6992AE";
     }
     else if(direction == "down")
     {
-        downButtonEle.style.backgroundColor ="white";
+        downButtonEle.style.backgroundColor ="#6992AE";
     }
     
     

@@ -3,15 +3,19 @@
     <head>
         <link rel="stylesheet" type="text/css" href="css/main.css">
         <script src="js/main.js"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     </head>
     <body>
         
-        <form style="height: 100px;">
+        <form style="height: 250px;margin-left: 20px;">
+            <h3>Lift Simulation</h3>
             <label for="lifts">Number of Lifts</label><br>
             <input type="number" id="lifts" name="fname" min="0" size="10"><br>
             <label for="floors">Number of Floors</label><br>
-            <input type="number" id="floors" name="pin" min="0" size="10">
-            <button type="button" onclick="myFunction()">Try it</button>
+            <input type="number" id="floors" name="pin" min="0" size="10"><br>
+            <button id="submit" type="button" onclick="myFunction()">Submit</button>
         </form>
         <div id="lift-layout">
         </div>

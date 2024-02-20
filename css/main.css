@@ -14,6 +14,7 @@
 .lift {
     transition-property: top;
     transition-duration: 5s;
+    transition-timing-function: linear;
     position: absolute;
     height: 200px;
     display: flex;
@@ -37,7 +38,16 @@
 
 .lift-button {
     width: 100px;
+    background-color: #4CAF50;
+    font-family: "Montserrat";
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
+
 
 
 hr {
@@ -51,3 +61,39 @@ body{
     margin: 0;
 }
 
+input[type=number], select {
+
+    padding: 12px 20px;
+    margin: 2px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+label {
+    font-family: "Montserrat";
+}
+
+h3 {
+    font-family: "Montserrat";
+    padding-top: 15px;
+    padding-bottom: 10px;
+    margin: 0;
+}
+
+#submit {
+    background-color: #4CAF50;
+    font-family: "Montserrat";
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#submit:hover {
+    background-color: #45a049;
+}
+  
